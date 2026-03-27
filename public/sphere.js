@@ -155,7 +155,7 @@ function updateDimensions() {
     _canvas.width  = window.innerWidth;
     _canvas.height = window.innerHeight;
     _cx = _canvas.width  / 2;
-    _cy = _canvas.height / 2;
+    _cy = _canvas.height / 2 + 40;
     _sphereRadius = Math.min(_cx, _cy) * 1.05;
     _ctx.textBaseline = 'middle';
     _ctx.textAlign    = 'center';
