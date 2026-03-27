@@ -22,7 +22,9 @@ function getVoteRange(votes) {
     if (!votes || votes.length === 0) return null;
 
     const tierOrder = ['F', 'D', 'C', 'B', 'A', 'S'];
-    const tierValues = votes.map(v => tierOrder.indexOf(v));
+    // Extract tier from vote objects
+    const tiers = votes.map(v => v.tier || v);
+    const tierValues = tiers.map(t => tierOrder.indexOf(t));
     const min = Math.min(...tierValues);
     const max = Math.max(...tierValues);
 

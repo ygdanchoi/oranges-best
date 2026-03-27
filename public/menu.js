@@ -2,12 +2,22 @@
 
 let menuOpen = false;
 let menuOranges = [];
+let menuUsername = '';
 
-// Load oranges for menu
+// Get username from cookies
+function getMenuUsername() {
+    const cookies = document.cookie.split(';');
+    const usernameCookie = cookies.find(c => c.trim().startsWith('username='));
+    return usernameCookie ? usernameCookie.split('=')[1] : '';
+}
+
+// Load oranges for menu with vote data
 async function loadMenuOranges() {
     try {
-        const response = await fetch('/api/oranges');
+        // Use tierlist API to get vote information
+        const response = await fetch('/api/tierlist');
         menuOranges = await response.json();
+        menuUsername = getMenuUsername();
     } catch (error) {
         console.error('Error loading menu oranges:', error);
     }
@@ -81,11 +91,30 @@ function renderMenuContent() {
         return;
     }
 
-    content.innerHTML = menuOranges.map(orange => `
-        <a href="/vote.html?orange=${orange.id}" class="menu-item">
-            <div class="menu-item-name">${escapeHtmlMenu(orange.name)}</div>
-        </a>
-    `).join('');
+    content.innerHTML = menuOranges.map(orange => {
+        // Find user's vote if logged in
+        let userVoteTier = null;
+        if (menuUsername && orange.votes && orange.votes.length > 0) {
+            const userVote = orange.votes.find(vote => vote.username === menuUsername);
+            if (userVote) {
+                userVoteTier = userVote.tier;
+            }
+        }
+
+        // Create vote indicator - badge if voted, placeholder if not
+        const voteIndicator = userVoteTier ? `
+            <div class="menu-tier-badge tier-${userVoteTier}"></div>
+        ` : `
+            <div class="menu-tier-placeholder"></div>
+        `;
+
+        return `
+            <a href="/vote.html?orange=${orange.id}" class="menu-item">
+                ${voteIndicator}
+                <div class="menu-item-name">${escapeHtmlMenu(orange.name)}</div>
+            </a>
+        `;
+    }).join('');
 }
 
 // Logout
@@ -109,7 +138,12 @@ function escapeHtmlMenu(text) {
 // Initialize menu
 async function initHamburgerMenu() {
     createHamburgerMenu();
-    await loadMenuOranges();
+    try {
+        await loadMenuOranges();
+    } catch (error) {
+        console.error('Error loading menu oranges:', error);
+        // Continue anyway so other scripts can load
+    }
 }
 
 // Auto-initialize

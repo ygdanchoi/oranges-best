@@ -25,6 +25,7 @@
             max-width: 500px;
             margin: 0 auto;
             padding: 1rem;
+            padding-top: 5rem;
             flex: 1;
         }
 
@@ -80,6 +81,7 @@
             color: #666;
             line-height: 1.5;
             margin-top: 0.5rem;
+            font-style: italic;
         }
 
         @media (prefers-color-scheme: dark) {
@@ -176,6 +178,7 @@
             background: white;
             border-radius: 8px;
             padding: 1.5rem;
+            margin-bottom: 1.5rem;
             box-shadow: 0 2px 4px rgba(0,0,0,0.1);
         }
 
@@ -342,12 +345,6 @@
             <h1 id="pageTitle">Orange</h1>
         </div>
 
-        <div id="orangeDisplay" class="orange-display hidden">
-            <div class="orange-description" id="orangeDescription"></div>
-            <div class="orange-store" id="orangeStore"></div>
-            <div class="orange-image" id="orangeImage">🍊</div>
-        </div>
-
         <div id="loginSection" class="login-section hidden">
             <h2>Login to Vote</h2>
             <div id="loginMessage"></div>
@@ -372,6 +369,12 @@
                 <button class="tier-btn tier-D" onclick="vote('D')">D</button>
                 <button class="tier-btn tier-F" onclick="vote('F')">F</button>
             </div>
+        </div>
+
+        <div id="orangeDisplay" class="orange-display hidden">
+            <div class="orange-description" id="orangeDescription"></div>
+            <div class="orange-store" id="orangeStore"></div>
+            <div class="orange-image" id="orangeImage">🍊</div>
         </div>
     </div>
 

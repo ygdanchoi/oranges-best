@@ -14,53 +14,23 @@ function checkAuth() {
 }
 
 // Login
-async function login() {
+function login() {
     const passwordInput = document.getElementById('password');
     password = passwordInput.value;
 
-    try {
-        const response = await fetch('/api/oranges', {
-            headers: {
-                'Cookie': `auth=${password}`
-            }
-        });
+    if (!password) {
+        showMessage('loginMessage', 'Password is required', 'error');
+        return;
+    }
 
-        // Try to make a request with the password
-        const testResponse = await fetch('/api/admin/oranges', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({
-                name: '_test',
-                description: '_test',
-                imageUrl: '',
-                password: password
-            })
-        });
+    // Set auth cookie
+    document.cookie = `auth=${password}; max-age=${30 * 24 * 60 * 60}; path=/`;
 
-        if (testResponse.status === 401) {
-            showMessage('loginMessage', 'Invalid password', 'error');
-            return;
-        }
-
-        // Delete the test orange if it was created
-        if (testResponse.ok) {
-            const data = await testResponse.json();
-            if (data.success) {
-                await fetch(`/api/admin/oranges/${data.orange.id}?password=${password}`, {
-                    method: 'DELETE'
-                });
-            }
-        }
-
-        showMessage('loginMessage', 'Login successful!', 'success');
+    showMessage('loginMessage', 'Login successful!', 'success');
+    setTimeout(() => {
         showAdminPanel();
         loadOranges();
-    } catch (error) {
-        showMessage('loginMessage', 'Login failed', 'error');
-        console.error('Login error:', error);
-    }
+    }, 500);
 }
 
 // Show admin panel
@@ -178,7 +148,8 @@ async function loadOranges() {
                     <button class="btn-small btn-delete" onclick="deleteOrange(${orange.id})">Delete</button>
                 </div>
             </div>
-        `).join('');
+            `;
+        }).join('');
     } catch (error) {
         console.error('Load error:', error);
     }

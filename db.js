@@ -99,31 +99,35 @@ async function getOrangesWithTiers() {
   const oranges = await getOranges();
   const allVotes = await getAllVotes();
 
-  // Group votes by orange
+  // Group votes by orange (keep full vote objects)
   const votesByOrange = {};
+  const tiersByOrange = {};
   allVotes.forEach(vote => {
     if (!votesByOrange[vote.orange_id]) {
       votesByOrange[vote.orange_id] = [];
+      tiersByOrange[vote.orange_id] = [];
     }
-    votesByOrange[vote.orange_id].push(vote.tier);
+    votesByOrange[vote.orange_id].push(vote);
+    tiersByOrange[vote.orange_id].push(vote.tier);
   });
 
   // Calculate tier for each orange using median
   const orangesWithTiers = oranges.map(orange => {
-    const votes = votesByOrange[orange.id] || [];
-    const tier = calculateTierMedian(votes);
+    const voteObjects = votesByOrange[orange.id] || [];
+    const tiers = tiersByOrange[orange.id] || [];
+    const tier = calculateTierMedian(tiers);
 
     // Count votes by tier for display
     const voteCounts = {};
-    votes.forEach(v => {
+    tiers.forEach(v => {
       voteCounts[v] = (voteCounts[v] || 0) + 1;
     });
 
     return {
       ...orange,
       tier,
-      voteCount: votes.length,
-      votes: votes,
+      voteCount: tiers.length,
+      votes: voteObjects, // Full vote objects with username
       voteCounts: voteCounts
     };
   });

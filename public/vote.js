@@ -80,7 +80,7 @@ async function loadOrange() {
 
         // Display orange info
         document.getElementById('orangeDescription').textContent = currentOrange.description || '';
-        document.getElementById('orangeStore').textContent = currentOrange.store ? `(Bought at ${currentOrange.store})` : '';
+        document.getElementById('orangeStore').textContent = currentOrange.store || '';
 
         // Display image if available
         const imageDiv = document.getElementById('orangeImage');

@@ -158,12 +158,15 @@ body {
 }
 
 .menu-item {
-    display: block;
+    display: flex;
+    align-items: center;
     padding: 1rem 1.5rem;
     text-decoration: none;
     color: #333;
     border-bottom: 1px solid #f0f0f0;
     transition: background 0.2s;
+    gap: 1rem;
+    min-height: 60px;
 }
 
 @media (prefers-color-scheme: dark) {
@@ -185,7 +188,60 @@ body {
 
 .menu-item-name {
     font-weight: 600;
-    margin-bottom: 0.25rem;
+    flex: 1;
+}
+
+.menu-tier-badge {
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+    flex-shrink: 0;
+    position: relative;
+    order: -1;
+}
+
+.menu-tier-badge::before {
+    content: '🍃';
+    position: absolute;
+    top: -6px;
+    right: -5px;
+    font-size: 1rem;
+}
+
+.menu-tier-badge.tier-S {
+    background: linear-gradient(270deg, red, orange, yellow, green, blue, indigo, violet);
+    background-size: 400% 400%;
+    animation: rainbowPulse 6s linear infinite;
+}
+.menu-tier-badge.tier-A { background: #ff7f00; }
+.menu-tier-badge.tier-B { background: #ffd700; }
+.menu-tier-badge.tier-C { background: #32cd32; }
+.menu-tier-badge.tier-D { background: #5a381e; }
+.menu-tier-badge.tier-F { background: #111111; }
+
+.menu-tier-placeholder {
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    border: 2px dashed #ccc;
+    flex-shrink: 0;
+    order: -1;
+}
+
+@media (prefers-color-scheme: dark) {
+    .menu-tier-placeholder {
+        border-color: #666;
+    }
+}
+
+@keyframes rainbowPulse {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
 }
 
 .menu-item-store {
