@@ -2,7 +2,7 @@
 // Self-initializing — just include this script and it runs.
 
 const SPHERE_CONFIG = {
-    PARTICLE_COUNT: 300,
+    PARTICLE_COUNT: 220,
     ROTATION_SPEED: 0.003,   // radians per frame (~10s per revolution at 60fps)
     TILT_ANGLE: 0.30,        // X-axis tilt in radians (~17°), gives globe feel
     FOCAL_LENGTH: 1500,
@@ -39,7 +39,7 @@ function angularDist(p1, p2) {
 function buildEdges() {
     _edges = [];
     const N = _particles.length;
-    const THRESHOLD = 0.28; // radians — ~1.4× avg nearest-neighbor distance for N=300
+    const THRESHOLD = 0.33; // radians — ~1.4× avg nearest-neighbor distance for N=220
     for (let i = 0; i < N; i++) {
         for (let j = i + 1; j < N; j++) {
             if (angularDist(_particles[i], _particles[j]) < THRESHOLD) {
