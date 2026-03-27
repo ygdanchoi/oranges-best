@@ -6,10 +6,10 @@ const SPHERE_CONFIG = {
     ROTATION_SPEED: 0.003,   // radians per frame (~10s per revolution at 60fps)
     TILT_ANGLE: 0.30,        // X-axis tilt in radians (~17°), gives globe feel
     FOCAL_LENGTH: 1500,
-    BASE_EMOJI_SIZE: 22,     // px at front face
-    MIN_EMOJI_SIZE: 6,       // px at back face
-    MAX_ALPHA: 0.55,
-    MIN_ALPHA: 0.08,
+    BASE_EMOJI_SIZE: 30,     // px at front face
+    MIN_EMOJI_SIZE: 9,       // px at back face
+    MAX_ALPHA: 0.80,
+    MIN_ALPHA: 0.18,
     EMOJI: '🍊',
 };
 
@@ -132,7 +132,7 @@ function draw(timestamp) {
     }).sort((x, y) => x.worldZ - y.worldZ);
 
     _ctx.strokeStyle = 'rgb(255, 140, 0)';
-    _ctx.lineWidth = 0.8;
+    _ctx.lineWidth = 1.5;
     for (const { a, b } of edgesSorted) {
         _ctx.globalAlpha = (a.alpha + b.alpha) / 2 * 0.5;
         _ctx.beginPath();
