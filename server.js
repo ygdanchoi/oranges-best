@@ -124,6 +124,30 @@ app.post('/api/vote', checkAuth, async (req, res) => {
   }
 });
 
+// Remove own vote
+app.delete('/api/vote', checkAuth, async (req, res) => {
+  try {
+    const { orangeId, username } = req.body;
+
+    if (!orangeId || !username) {
+      return res.status(400).json({ error: 'Missing required fields' });
+    }
+
+    const vote = await db.deleteVoteByUser(orangeId, username);
+
+    if (!vote) {
+      return res.status(404).json({ error: 'Vote not found' });
+    }
+
+    io.emit('voteUpdate', { orangeId: parseInt(orangeId), username });
+
+    res.json({ success: true });
+  } catch (error) {
+    console.error('Error removing vote:', error);
+    res.status(500).json({ error: 'Failed to remove vote' });
+  }
+});
+
 // Admin endpoints
 
 // Create orange

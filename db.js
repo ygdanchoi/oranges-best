@@ -59,6 +59,15 @@ async function deleteVote(id) {
   return result.rows[0];
 }
 
+// Delete a vote by orange + username
+async function deleteVoteByUser(orangeId, username) {
+  const result = await pool.query(
+    'DELETE FROM votes WHERE orange_id = $1 AND username = $2 RETURNING *',
+    [orangeId, username]
+  );
+  return result.rows[0];
+}
+
 // Update a vote's tier
 async function updateVote(id, tier) {
   const result = await pool.query(
@@ -184,6 +193,7 @@ module.exports = {
   updateOrange,
   deleteOrange,
   deleteVote,
+  deleteVoteByUser,
   updateVote,
   submitVote,
   getVotesForOrange,

@@ -258,35 +258,46 @@ async function vote(tier, buttonEl) {
         return;
     }
 
+    const isVoted = buttonEl && buttonEl.classList.contains('voted');
+
     try {
-        const response = await fetch('/api/vote', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({
-                orangeId: orangeId,
-                username: username,
-                tier: tier,
-                password: password
-            })
-        });
+        if (isVoted) {
+            const response = await fetch('/api/vote', {
+                method: 'DELETE',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ orangeId, username, password })
+            });
 
-        const data = await response.json();
+            const data = await response.json();
 
-        if (!response.ok) {
-            if (response.status === 401) {
-                showMessage('voteMessage', 'Invalid password. Please log in again.', 'error');
-                document.getElementById('voteSection').classList.add('hidden');
-                document.getElementById('loginSection').classList.remove('hidden');
-                return;
+            if (!response.ok) {
+                throw new Error(data.error || 'Failed to remove vote');
             }
-            throw new Error(data.error || 'Failed to submit vote');
-        }
 
-        // Highlight the voted button and play effect
-        highlightVotedButton(tier);
-        if (buttonEl) playLensFlareEffect(buttonEl);
+            document.querySelectorAll('.tier-btn').forEach(btn => btn.classList.remove('voted'));
+            if (buttonEl) playLensFlareEffect(buttonEl);
+        } else {
+            const response = await fetch('/api/vote', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ orangeId, username, tier, password })
+            });
+
+            const data = await response.json();
+
+            if (!response.ok) {
+                if (response.status === 401) {
+                    showMessage('voteMessage', 'Invalid password. Please log in again.', 'error');
+                    document.getElementById('voteSection').classList.add('hidden');
+                    document.getElementById('loginSection').classList.remove('hidden');
+                    return;
+                }
+                throw new Error(data.error || 'Failed to submit vote');
+            }
+
+            highlightVotedButton(tier);
+            if (buttonEl) playLensFlareEffect(buttonEl);
+        }
     } catch (error) {
         showMessage('voteMessage', error.message, 'error');
         console.error('Vote error:', error);
