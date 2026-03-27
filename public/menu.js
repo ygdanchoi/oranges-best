@@ -37,7 +37,7 @@ function createHamburgerMenu() {
             </button>
             <div id="dropdown-content" class="dropdown-content">
                 <a href="/tierlist.html" class="dropdown-header">
-                    <span>View Tierlist</span>
+                    <span>View Orange Tierlist</span>
                 </a>
                 <div class="dropdown-items" id="menu-content">
                     <div class="menu-loading">Loading...</div>
@@ -58,16 +58,16 @@ function getPageTitle() {
     const path = window.location.pathname;
 
     if (path.includes('tierlist')) {
-        return '🍊 Orange Tierlist Alignment Sync II';
+        return 'Orange Tierlist Alignment Sync';
     } else if (path.includes('admin')) {
-        return '🍊 Orange Admin Panel';
+        return 'Orange Admin Panel';
     } else if (path.includes('vote')) {
         // Try to get the orange name from the page if available
         const orangeName = document.getElementById('pageTitle')?.textContent || 'Orange';
-        return `🍊 ${orangeName}`;
+        return `${orangeName}`;
     }
 
-    return '🍊 Orange';
+    return '';
 }
 
 // Toggle menu

@@ -162,8 +162,6 @@ async function vote(tier) {
             throw new Error(data.error || 'Failed to submit vote');
         }
 
-        showMessage('voteMessage', `Vote submitted: ${tier}!`, 'success');
-
         // Highlight the voted button
         highlightVotedButton(tier);
     } catch (error) {
