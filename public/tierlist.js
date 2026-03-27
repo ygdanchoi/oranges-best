@@ -73,6 +73,7 @@ function renderTierlist() {
                     </div>
                 `;
             }).join('');
+            applyAnimationDelays(tierContent);
         }
     });
 
@@ -99,8 +100,17 @@ function renderTierlist() {
                     </div>
                 `;
             }).join('');
+            applyAnimationDelays(unvotedContent);
         }
     }
+}
+
+// Apply staggered animation delays to cards in a tier
+function applyAnimationDelays(tierContent) {
+    const cards = tierContent.querySelectorAll('.orange-card');
+    cards.forEach((card, index) => {
+        card.style.animationDelay = `0s, ${index * 0.25}s`;
+    });
 }
 
 // Escape HTML
