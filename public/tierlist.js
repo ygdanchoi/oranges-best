@@ -84,11 +84,14 @@ function renderTierlist() {
             .filter(o => !o.tier)
             .sort((a, b) => (b.voteCount || 0) - (a.voteCount || 0));
 
+        const unvotedRow = unvotedContent.closest('.tier-row');
         if (unvotedOranges.length === 0) {
             unvotedContent.innerHTML = '';
             unvotedContent.classList.add('empty');
+            if (unvotedRow) unvotedRow.classList.add('hidden');
         } else {
             unvotedContent.classList.remove('empty');
+            if (unvotedRow) unvotedRow.classList.remove('hidden');
             unvotedContent.innerHTML = unvotedOranges.map(orange => {
                 const voteRange = getVoteRange(orange.votes);
                 const voteBreakdown = formatVoteBreakdown(orange.voteCounts);

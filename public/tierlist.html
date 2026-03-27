@@ -64,7 +64,8 @@
             }
         }
 
-        .tier-row:last-child {
+        .tier-row:last-child,
+        .tier-row:has(+ .tier-row.hidden) {
             border-bottom: none;
         }
 

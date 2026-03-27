@@ -15,6 +15,7 @@ const SPHERE_CONFIG = {
 
 let _canvas, _ctx;
 let _particles = [];  // [{theta, phi}]
+let _edges = [];      // [{i, j}] pre-computed neighbor pairs
 let _rotAngle = 0;
 let _sphereRadius = 1;
 let _cx = 0, _cy = 0;
@@ -23,6 +24,29 @@ let _resizeTimer = null;
 
 function applyDisplacement(theta, phi, time) {
     return { dTheta: 0, dPhi: 0, dR: 0 };
+}
+
+function angularDist(p1, p2) {
+    const x1 = Math.sin(p1.phi) * Math.cos(p1.theta);
+    const y1 = Math.cos(p1.phi);
+    const z1 = Math.sin(p1.phi) * Math.sin(p1.theta);
+    const x2 = Math.sin(p2.phi) * Math.cos(p2.theta);
+    const y2 = Math.cos(p2.phi);
+    const z2 = Math.sin(p2.phi) * Math.sin(p2.theta);
+    return Math.acos(Math.max(-1, Math.min(1, x1*x2 + y1*y2 + z1*z2)));
+}
+
+function buildEdges() {
+    _edges = [];
+    const N = _particles.length;
+    const THRESHOLD = 0.28; // radians — ~1.4× avg nearest-neighbor distance for N=300
+    for (let i = 0; i < N; i++) {
+        for (let j = i + 1; j < N; j++) {
+            if (angularDist(_particles[i], _particles[j]) < THRESHOLD) {
+                _edges.push({ i, j });
+            }
+        }
+    }
 }
 
 function getFont(px) {
@@ -98,12 +122,28 @@ function draw(timestamp) {
     _ctx.clearRect(0, 0, _canvas.width, _canvas.height);
 
     const matrix = buildRotationMatrix(_rotAngle, SPHERE_CONFIG.TILT_ANGLE);
+    // Keep original index order so edges can look up by particle index
     const projected = _particles.map(p => projectParticle(p, matrix, timestamp));
 
-    // Painter's algorithm: draw back particles first
-    projected.sort((a, b) => a.worldZ - b.worldZ);
+    // Pass 1: edges, back to front
+    const edgesSorted = _edges.map(({ i, j }) => {
+        const a = projected[i], b = projected[j];
+        return { a, b, worldZ: (a.worldZ + b.worldZ) / 2 };
+    }).sort((x, y) => x.worldZ - y.worldZ);
 
-    for (const p of projected) {
+    _ctx.strokeStyle = 'rgb(255, 140, 0)';
+    _ctx.lineWidth = 0.8;
+    for (const { a, b } of edgesSorted) {
+        _ctx.globalAlpha = (a.alpha + b.alpha) / 2 * 0.5;
+        _ctx.beginPath();
+        _ctx.moveTo(a.screenX, a.screenY);
+        _ctx.lineTo(b.screenX, b.screenY);
+        _ctx.stroke();
+    }
+
+    // Pass 2: particles on top, back to front
+    const particlesSorted = projected.slice().sort((a, b) => a.worldZ - b.worldZ);
+    for (const p of particlesSorted) {
         _ctx.globalAlpha = p.alpha;
         _ctx.font = getFont(p.size);
         _ctx.fillText(SPHERE_CONFIG.EMOJI, p.screenX, p.screenY);
@@ -137,6 +177,7 @@ function initSphere() {
 
     updateDimensions();
     generateParticles();
+    buildEdges();
 
     window.addEventListener('resize', onResize);
     requestAnimationFrame(draw);
