@@ -77,6 +77,7 @@
             font-size: 2.5rem;
             font-weight: 900;
             color: white;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.3);
             flex-shrink: 0;
         }
 
@@ -156,6 +157,27 @@
             .orange-card {
                 background: #333333;
             }
+        }
+
+        .orange-card.tier-S {
+            background: linear-gradient(270deg, red, orange, yellow, green, blue, indigo, violet);
+            background-size: 400% 400%;
+            animation: fadeInSlide 0.4s ease forwards, floatUpDown 4.5s ease-in-out infinite, rainbowPulse 6s linear infinite;
+        }
+        .orange-card.tier-A { background: #ff7f00; }
+        .orange-card.tier-B { background: #ffd700; }
+        .orange-card.tier-C { background: #32cd32; }
+        .orange-card.tier-D { background: #5a381e; }
+        .orange-card.tier-F { background: #111111; }
+
+        .orange-card[class*="tier-"] .orange-card-name {
+            color: #fff;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.3);
+        }
+
+        .orange-card[class*="tier-"] .orange-card-votes {
+            color: rgba(255,255,255,0.75);
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.3);
         }
 
         .orange-card:hover {
