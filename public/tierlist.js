@@ -97,7 +97,7 @@ function renderTierlist() {
                 const voteBreakdown = formatVoteBreakdown(orange.voteCounts);
 
                 return `
-                    <div class="orange-card" onclick="window.location.href='/vote.html?orange=${orange.id}'" title="${voteBreakdown}">
+                    <div class="orange-card tier-unvoted" onclick="window.location.href='/vote.html?orange=${orange.id}'" title="${voteBreakdown}">
                         <div class="orange-card-name">${escapeHtml(orange.name)}</div>
                         <div class="orange-card-votes">${orange.voteCount} ${orange.voteCount === 1 ? 'vote' : 'votes'}${voteRange ? ` (${voteRange})` : ''}</div>
                     </div>
