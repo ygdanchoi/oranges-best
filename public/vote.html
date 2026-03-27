@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vote - Orange Tierlist</title>
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .vote-container {
+            max-width: 500px;
+            margin: 0 auto;
+            padding: 1rem;
+            flex: 1;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 2rem;
+            padding-bottom: 1rem;
+            border-bottom: 2px solid #ff8c00;
+        }
+
+        .header h1 {
+            margin: 0;
+            color: #333;
+            font-size: 1.5rem;
+        }
+
+        .orange-display {
+            background: white;
+            border-radius: 8px;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            text-align: center;
+        }
+
+        .orange-image {
+            width: 200px;
+            height: 200px;
+            margin: 0 auto 1rem;
+            background: #f5f5f5;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 4rem;
+        }
+
+        .orange-image img {
+            max-width: 100%;
+            max-height: 100%;
+            border-radius: 8px;
+        }
+
+        .orange-name {
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+            color: #333;
+        }
+
+        .orange-store {
+            font-size: 1rem;
+            font-weight: 600;
+            color: #ff8c00;
+            margin-bottom: 0.5rem;
+        }
+
+        .orange-description {
+            color: #666;
+            line-height: 1.5;
+            margin-top: 1rem;
+        }
+
+        .login-section {
+            background: white;
+            border-radius: 8px;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .login-section h2 {
+            margin: 0 0 1rem 0;
+            font-size: 1.2rem;
+        }
+
+        .form-group {
+            margin-bottom: 1rem;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 0.25rem;
+            font-weight: 500;
+            color: #666;
+        }
+
+        input {
+            width: 100%;
+            padding: 0.75rem;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 1rem;
+            font-family: inherit;
+        }
+
+        .tier-buttons {
+            background: white;
+            border-radius: 8px;
+            padding: 1.5rem;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .tier-buttons h2 {
+            margin: 0 0 1rem 0;
+            text-align: center;
+            font-size: 1.2rem;
+            color: #333;
+        }
+
+        .tier-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .tier-btn {
+            padding: 2rem 1rem;
+            font-size: 2rem;
+            font-weight: 700;
+            border: 3px solid #ddd;
+            background: white;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .tier-btn:hover {
+            transform: scale(1.05);
+            border-color: #ff8c00;
+        }
+
+        .tier-btn:active {
+            transform: scale(0.95);
+        }
+
+        .tier-btn.tier-S { border-color: #ff4444; color: #ff4444; }
+        .tier-btn.tier-A { border-color: #ff8844; color: #ff8844; }
+        .tier-btn.tier-B { border-color: #ffcc44; color: #ffcc44; }
+        .tier-btn.tier-C { border-color: #88cc44; color: #88cc44; }
+        .tier-btn.tier-D { border-color: #4488cc; color: #4488cc; }
+        .tier-btn.tier-F { border-color: #8844cc; color: #8844cc; }
+
+        .tier-btn.tier-S:hover { background: #fff5f5; }
+        .tier-btn.tier-A:hover { background: #fff9f5; }
+        .tier-btn.tier-B:hover { background: #fffef5; }
+        .tier-btn.tier-C:hover { background: #f9fff5; }
+        .tier-btn.tier-D:hover { background: #f5f9ff; }
+        .tier-btn.tier-F:hover { background: #f9f5ff; }
+
+        .message {
+            padding: 1rem;
+            border-radius: 4px;
+            margin-bottom: 1rem;
+            text-align: center;
+            font-weight: 500;
+        }
+
+        .message.success {
+            background: #d4edda;
+            color: #155724;
+        }
+
+        .message.error {
+            background: #f8d7da;
+            color: #721c24;
+        }
+
+        .button {
+            width: 100%;
+            padding: 0.75rem;
+            background: #ff8c00;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+        }
+
+        .button:hover {
+            background: #ff7700;
+        }
+
+        .current-vote {
+            text-align: center;
+            padding: 1rem;
+            background: #f8f9fa;
+            border-radius: 4px;
+            margin-top: 1rem;
+            font-weight: 500;
+            color: #666;
+        }
+
+        .hidden {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="vote-container">
+        <div class="header">
+            <h1>🍊 Orange Tierlist</h1>
+        </div>
+
+        <div id="orangeDisplay" class="orange-display hidden">
+            <div class="orange-image" id="orangeImage">🍊</div>
+            <div class="orange-name" id="orangeName"></div>
+            <div class="orange-store" id="orangeStore"></div>
+            <div class="orange-description" id="orangeDescription"></div>
+        </div>
+
+        <div id="loginSection" class="login-section hidden">
+            <h2>Login to Vote</h2>
+            <div id="loginMessage"></div>
+            <div class="form-group">
+                <label for="username">Username:</label>
+                <input type="text" id="username" placeholder="Enter your name">
+            </div>
+            <div class="form-group">
+                <label for="password">Password:</label>
+                <input type="password" id="password" placeholder="Enter password">
+            </div>
+            <button class="button" onclick="login()">Login</button>
+        </div>
+
+        <div id="voteSection" class="tier-buttons hidden">
+            <h2>Rate This Orange</h2>
+            <div id="voteMessage"></div>
+            <div class="tier-grid">
+                <button class="tier-btn tier-S" onclick="vote('S')">S</button>
+                <button class="tier-btn tier-A" onclick="vote('A')">A</button>
+                <button class="tier-btn tier-B" onclick="vote('B')">B</button>
+                <button class="tier-btn tier-C" onclick="vote('C')">C</button>
+                <button class="tier-btn tier-D" onclick="vote('D')">D</button>
+                <button class="tier-btn tier-F" onclick="vote('F')">F</button>
+            </div>
+            <div id="currentVote" class="current-vote hidden"></div>
+        </div>
+    </div>
+
+    <script src="menu.js"></script>
+    <script src="vote.js"></script>
+</body>
+</html>
