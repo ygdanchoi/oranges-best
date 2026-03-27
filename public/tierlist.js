@@ -17,6 +17,34 @@ async function loadTierlist() {
     }
 }
 
+// Get vote range (min and max tiers)
+function getVoteRange(votes) {
+    if (!votes || votes.length === 0) return null;
+
+    const tierOrder = ['F', 'D', 'C', 'B', 'A', 'S'];
+    const tierValues = votes.map(v => tierOrder.indexOf(v));
+    const min = Math.min(...tierValues);
+    const max = Math.max(...tierValues);
+
+    if (min === max) {
+        return tierOrder[min];
+    }
+    return `${tierOrder[min]}-${tierOrder[max]}`;
+}
+
+// Format vote breakdown for tooltip
+function formatVoteBreakdown(voteCounts) {
+    if (!voteCounts || Object.keys(voteCounts).length === 0) return '';
+
+    const tiers = ['S', 'A', 'B', 'C', 'D', 'F'];
+    const breakdown = tiers
+        .filter(tier => voteCounts[tier])
+        .map(tier => `${tier}: ${voteCounts[tier]}`)
+        .join(', ');
+
+    return breakdown;
+}
+
 // Render tierlist
 function renderTierlist() {
     const tiers = ['S', 'A', 'B', 'C', 'D', 'F'];
@@ -26,16 +54,21 @@ function renderTierlist() {
         const orangesInTier = orangesData.filter(o => o.tier === tier);
 
         if (orangesInTier.length === 0) {
-            tierContent.innerHTML = '<span>No oranges yet</span>';
+            tierContent.innerHTML = '';
             tierContent.classList.add('empty');
         } else {
             tierContent.classList.remove('empty');
-            tierContent.innerHTML = orangesInTier.map(orange => `
-                <div class="orange-card" onclick="window.location.href='/vote.html?orange=${orange.id}'">
-                    <div class="orange-card-name">${escapeHtml(orange.name)}</div>
-                    <div class="orange-card-votes">${orange.voteCount} ${orange.voteCount === 1 ? 'vote' : 'votes'}</div>
-                </div>
-            `).join('');
+            tierContent.innerHTML = orangesInTier.map(orange => {
+                const voteRange = getVoteRange(orange.votes);
+                const voteBreakdown = formatVoteBreakdown(orange.voteCounts);
+
+                return `
+                    <div class="orange-card" onclick="window.location.href='/vote.html?orange=${orange.id}'" title="${voteBreakdown}">
+                        <div class="orange-card-name">${escapeHtml(orange.name)}</div>
+                        <div class="orange-card-votes">${orange.voteCount} ${orange.voteCount === 1 ? 'vote' : 'votes'}${voteRange ? ` (${voteRange})` : ''}</div>
+                    </div>
+                `;
+            }).join('');
         }
     });
 }

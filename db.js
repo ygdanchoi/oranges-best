@@ -112,10 +112,19 @@ async function getOrangesWithTiers() {
   const orangesWithTiers = oranges.map(orange => {
     const votes = votesByOrange[orange.id] || [];
     const tier = calculateTierMedian(votes);
+
+    // Count votes by tier for display
+    const voteCounts = {};
+    votes.forEach(v => {
+      voteCounts[v] = (voteCounts[v] || 0) + 1;
+    });
+
     return {
       ...orange,
       tier,
-      voteCount: votes.length
+      voteCount: votes.length,
+      votes: votes,
+      voteCounts: voteCounts
     };
   });
 

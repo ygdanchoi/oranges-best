@@ -79,9 +79,8 @@ async function loadOrange() {
         document.getElementById('pageTitle').textContent = currentOrange.name;
 
         // Display orange info
-        document.getElementById('orangeName').textContent = currentOrange.name;
-        document.getElementById('orangeStore').textContent = currentOrange.store || '';
         document.getElementById('orangeDescription').textContent = currentOrange.description || '';
+        document.getElementById('orangeStore').textContent = currentOrange.store ? `(Bought at ${currentOrange.store})` : '';
 
         // Display image if available
         const imageDiv = document.getElementById('orangeImage');
@@ -105,9 +104,21 @@ async function loadCurrentVote() {
     const userVote = currentOrange.votes.find(v => v.username === username);
 
     if (userVote) {
-        const currentVoteDiv = document.getElementById('currentVote');
-        currentVoteDiv.textContent = `Your current vote: ${userVote.tier}`;
-        currentVoteDiv.classList.remove('hidden');
+        highlightVotedButton(userVote.tier);
+    }
+}
+
+// Highlight the voted button
+function highlightVotedButton(tier) {
+    // Remove previous highlights
+    document.querySelectorAll('.tier-btn').forEach(btn => {
+        btn.classList.remove('voted');
+    });
+
+    // Add highlight to voted button
+    const votedBtn = document.querySelector(`.tier-btn.tier-${tier}`);
+    if (votedBtn) {
+        votedBtn.classList.add('voted');
     }
 }
 
@@ -147,10 +158,8 @@ async function vote(tier) {
 
         showMessage('voteMessage', `Vote submitted: ${tier}!`, 'success');
 
-        // Update current vote display
-        const currentVoteDiv = document.getElementById('currentVote');
-        currentVoteDiv.textContent = `Your current vote: ${tier}`;
-        currentVoteDiv.classList.remove('hidden');
+        // Highlight the voted button
+        highlightVotedButton(tier);
     } catch (error) {
         showMessage('voteMessage', error.message, 'error');
         console.error('Vote error:', error);
@@ -159,12 +168,32 @@ async function vote(tier) {
 
 // Show message
 function showMessage(elementId, message, type) {
-    const messageDiv = document.getElementById(elementId);
-    messageDiv.innerHTML = `<div class="message ${type}">${message}</div>`;
+    // For vote messages, show as toast at bottom
+    if (elementId === 'voteMessage') {
+        // Remove any existing toast
+        const existingToast = document.querySelector('.message');
+        if (existingToast) {
+            existingToast.remove();
+        }
 
-    setTimeout(() => {
-        messageDiv.innerHTML = '';
-    }, 3000);
+        // Create and show new toast
+        const toast = document.createElement('div');
+        toast.className = `message ${type}`;
+        toast.textContent = message;
+        document.body.appendChild(toast);
+
+        setTimeout(() => {
+            toast.remove();
+        }, 3000);
+    } else {
+        // For login messages, show inline
+        const messageDiv = document.getElementById(elementId);
+        messageDiv.innerHTML = `<div style="padding: 0.75rem; border-radius: 4px; margin-bottom: 1rem; text-align: center; font-weight: 500; background: ${type === 'success' ? '#d4edda' : '#f8d7da'}; color: ${type === 'success' ? '#155724' : '#721c24'};">${message}</div>`;
+
+        setTimeout(() => {
+            messageDiv.innerHTML = '';
+        }, 3000);
+    }
 }
 
 // Initialize

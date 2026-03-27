@@ -65,34 +65,25 @@
             }
         }
 
-        .orange-name {
-            font-size: 1.5rem;
-            font-weight: 700;
-            margin-bottom: 0.5rem;
-            color: #333;
-        }
-
-        @media (prefers-color-scheme: dark) {
-            .orange-name {
-                color: #fff;
-            }
-        }
-
-        .orange-store {
-            font-size: 1rem;
-            font-weight: 600;
-            color: #ff8c00;
-            margin-bottom: 0.5rem;
-        }
-
         .orange-description {
             color: #666;
             line-height: 1.5;
-            margin-bottom: 1rem;
         }
 
         @media (prefers-color-scheme: dark) {
             .orange-description {
+                color: #ccc;
+            }
+        }
+
+        .orange-store {
+            color: #666;
+            line-height: 1.5;
+            margin-top: 0.5rem;
+        }
+
+        @media (prefers-color-scheme: dark) {
+            .orange-store {
                 color: #ccc;
             }
         }
@@ -236,9 +227,9 @@
         .tier-btn::before {
             content: '🍃';
             position: absolute;
-            top: -10px;
-            right: -5px;
-            font-size: 2rem;
+            top: -12px;
+            right: -8px;
+            font-size: 2.5rem;
         }
 
         .tier-btn:hover {
@@ -248,6 +239,17 @@
 
         .tier-btn:active {
             transform: scale(0.95);
+        }
+
+        .tier-btn.voted {
+            outline: 5px solid white;
+            outline-offset: 3px;
+        }
+
+        @media (prefers-color-scheme: dark) {
+            .tier-btn.voted {
+                outline-color: #fff;
+            }
         }
 
         .tier-btn.tier-S {
@@ -268,11 +270,28 @@
         }
 
         .message {
-            padding: 1rem;
-            border-radius: 4px;
-            margin-bottom: 1rem;
+            position: fixed;
+            bottom: 2rem;
+            left: 50%;
+            transform: translateX(-50%);
+            padding: 1rem 2rem;
+            border-radius: 8px;
             text-align: center;
             font-weight: 500;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+            z-index: 1000;
+            animation: slideUp 0.3s ease;
+        }
+
+        @keyframes slideUp {
+            from {
+                bottom: -100px;
+                opacity: 0;
+            }
+            to {
+                bottom: 2rem;
+                opacity: 1;
+            }
         }
 
         .message.success {
@@ -283,6 +302,17 @@
         .message.error {
             background: #f8d7da;
             color: #721c24;
+        }
+
+        @media (prefers-color-scheme: dark) {
+            .message.success {
+                background: #1e4620;
+                color: #7dff82;
+            }
+            .message.error {
+                background: #4a1f1f;
+                color: #ff8888;
+            }
         }
 
         .button {
@@ -301,23 +331,6 @@
             background: #ff7700;
         }
 
-        .current-vote {
-            text-align: center;
-            padding: 1rem;
-            background: #f8f9fa;
-            border-radius: 4px;
-            margin-top: 1rem;
-            font-weight: 500;
-            color: #666;
-        }
-
-        @media (prefers-color-scheme: dark) {
-            .current-vote {
-                background: #1a1a1a;
-                color: #ccc;
-            }
-        }
-
         .hidden {
             display: none;
         }
@@ -330,9 +343,8 @@
         </div>
 
         <div id="orangeDisplay" class="orange-display hidden">
-            <div class="orange-name" id="orangeName"></div>
-            <div class="orange-store" id="orangeStore"></div>
             <div class="orange-description" id="orangeDescription"></div>
+            <div class="orange-store" id="orangeStore"></div>
             <div class="orange-image" id="orangeImage">🍊</div>
         </div>
 
@@ -352,7 +364,6 @@
 
         <div id="voteSection" class="tier-buttons hidden">
             <h2>Rate This Orange</h2>
-            <div id="voteMessage"></div>
             <div class="tier-grid">
                 <button class="tier-btn tier-S" onclick="vote('S')">S</button>
                 <button class="tier-btn tier-A" onclick="vote('A')">A</button>
@@ -361,7 +372,6 @@
                 <button class="tier-btn tier-D" onclick="vote('D')">D</button>
                 <button class="tier-btn tier-F" onclick="vote('F')">F</button>
             </div>
-            <div id="currentVote" class="current-vote hidden"></div>
         </div>
     </div>
 
