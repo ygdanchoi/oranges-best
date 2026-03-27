@@ -126,7 +126,7 @@ function renderMenuContent() {
         itemsHTML += `
             <button onclick="logout()" class="menu-item logout-item">
                 <div style="font-size: 1.5rem; flex-shrink: 0; width: 30px; height: 30px; display: flex; align-items: center; justify-content: center;">👋</div>
-                <div class="menu-item-name">Logout</div>
+                <div class="menu-item-name">Logout ${menuUsername ? escapeHtmlMenu(menuUsername) : ''}</div>
             </button>
         `;
     }
