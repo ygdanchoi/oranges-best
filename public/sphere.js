@@ -41,7 +41,7 @@ function generateParticles() {
     const N = SPHERE_CONFIG.PARTICLE_COUNT;
     const goldenAngle = Math.PI * (3 - Math.sqrt(5)); // ~2.39996 rad
     for (let i = 0; i < N; i++) {
-        const y = 1 - (2 * i / (N - 1));
+        const y = 1 - (2 * (i + 0.5) / N);
         const r = Math.sqrt(Math.max(0, 1 - y * y));
         const angle = i * goldenAngle;
         const x = Math.cos(angle) * r;
@@ -126,7 +126,7 @@ function updateDimensions() {
     _canvas.height = window.innerHeight;
     _cx = _canvas.width  / 2;
     _cy = _canvas.height / 2;
-    _sphereRadius = Math.min(_cx, _cy) * 0.76;
+    _sphereRadius = Math.min(_cx, _cy) * 1.05;
     // Canvas resize wipes context state — restore text settings
     _ctx.textBaseline = 'middle';
     _ctx.textAlign    = 'center';

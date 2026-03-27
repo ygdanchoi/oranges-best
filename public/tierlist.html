@@ -23,6 +23,8 @@
             max-width: 1200px;
             margin: 0 auto;
             padding-top: 3rem;
+            position: relative;
+            z-index: 10;
         }
 
         .header {
@@ -38,7 +40,7 @@
         }
 
         .tierlist {
-            background: white;
+            background: rgba(255,255,255,0.72);
             border-radius: 12px;
             overflow: hidden;
             box-shadow: 0 10px 40px rgba(0,0,0,0.3);
@@ -46,7 +48,7 @@
 
         @media (prefers-color-scheme: dark) {
             .tierlist {
-                background: #2a2a2a;
+                background: rgba(42,42,42,0.72);
             }
         }
 
@@ -118,13 +120,6 @@
             flex-wrap: wrap;
             gap: 1rem;
             align-items: center;
-            background: #fafafa;
-        }
-
-        @media (prefers-color-scheme: dark) {
-            .tier-content {
-                background: #1a1a1a;
-            }
         }
 
         .tier-content.empty {
@@ -134,7 +129,7 @@
         }
 
         .orange-card {
-            background: white;
+            background: rgba(255,255,255,0.72);
             border-radius: 9999px;
             padding: 0.6rem 1.4rem;
             box-shadow: 0 2px 4px rgba(0,0,0,0.1);
@@ -158,7 +153,7 @@
 
         @media (prefers-color-scheme: dark) {
             .orange-card {
-                background: #333;
+                background: rgba(51,51,51,0.72);
             }
         }
 

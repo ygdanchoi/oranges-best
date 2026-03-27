@@ -16,8 +16,15 @@ body {
     margin: 0;
     padding-top: 75px;
     font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', sans-serif;
-    background: #f5f5f5;
-    color: #333;
+    background: #1a1a1a;
+    color: #eee;
+}
+
+@media (prefers-color-scheme: light) {
+    body {
+        background: #f5f5f5;
+        color: #333;
+    }
 }
 
 /* Utility classes */
@@ -175,6 +182,7 @@ body {
 .dropdown-items {
     overflow-y: auto;
     -webkit-overflow-scrolling: touch;
+    padding-bottom: 2rem;
 }
 
 
@@ -320,4 +328,12 @@ body {
 .dropdown-overlay.open {
     opacity: 1;
     pointer-events: auto;
+}
+
+/* Ensure main content containers sit above the sphere canvas (z-index: 1) */
+.vote-container,
+.admin-container,
+.container {
+    position: relative;
+    z-index: 2;
 }

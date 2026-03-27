@@ -7,12 +7,12 @@
     <link rel="stylesheet" href="styles.css">
     <style>
         body {
-            background: #f5f5f5;
+            background: #1a1a1a;
         }
 
-        @media (prefers-color-scheme: dark) {
+        @media (prefers-color-scheme: light) {
             body {
-                background: #1a1a1a;
+                background: #f5f5f5;
             }
         }
 
@@ -20,19 +20,21 @@
             max-width: 800px;
             margin: 2rem auto;
             padding: 0 1rem;
+            position: relative;
+            z-index: 10;
         }
 
         .login-section, .add-section, .list-section {
-            background: white;
+            background: rgba(255,255,255,0.72);
             padding: 1.5rem;
             margin-bottom: 1.5rem;
-            border-radius: 8px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            border-radius: 12px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.3);
         }
 
         @media (prefers-color-scheme: dark) {
             .login-section, .add-section, .list-section {
-                background: #2a2a2a;
+                background: rgba(42,42,42,0.72);
             }
         }
 
