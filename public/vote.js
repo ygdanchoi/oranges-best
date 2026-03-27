@@ -81,8 +81,6 @@ async function loadOrange() {
 
         currentOrange = await response.json();
 
-        // Set page title
-        document.getElementById('pageTitle').textContent = currentOrange.name;
         document.title = `${currentOrange.name}`;
 
         // Update dropdown button title
