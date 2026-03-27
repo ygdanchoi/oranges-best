@@ -108,10 +108,10 @@ async function getOrangesWithTiers() {
     votesByOrange[vote.orange_id].push(vote.tier);
   });
 
-  // Calculate tier for each orange using mode (most common vote)
+  // Calculate tier for each orange using median
   const orangesWithTiers = oranges.map(orange => {
     const votes = votesByOrange[orange.id] || [];
-    const tier = calculateTierMode(votes);
+    const tier = calculateTierMedian(votes);
     return {
       ...orange,
       tier,
@@ -122,30 +122,30 @@ async function getOrangesWithTiers() {
   return orangesWithTiers;
 }
 
-// Calculate tier using mode (most common vote)
-function calculateTierMode(votes) {
+// Calculate tier using median (round up for ties)
+function calculateTierMedian(votes) {
   if (votes.length === 0) return null;
 
-  // Count votes for each tier
-  const tierCounts = {};
-  votes.forEach(tier => {
-    tierCounts[tier] = (tierCounts[tier] || 0) + 1;
-  });
+  // Map tiers to numeric values
+  const tierToNum = { 'S': 5, 'A': 4, 'B': 3, 'C': 2, 'D': 1, 'F': 0 };
+  const numToTier = { 5: 'S', 4: 'A', 3: 'B', 2: 'C', 1: 'D', 0: 'F' };
 
-  // Find tier with most votes
-  let maxCount = 0;
-  let modeTier = null;
-  const tierOrder = ['S', 'A', 'B', 'C', 'D', 'F'];
+  // Convert votes to numbers and sort
+  const numericVotes = votes.map(tier => tierToNum[tier]).sort((a, b) => a - b);
 
-  tierOrder.forEach(tier => {
-    const count = tierCounts[tier] || 0;
-    if (count > maxCount || (count === maxCount && count > 0)) {
-      maxCount = count;
-      modeTier = tier;
-    }
-  });
+  let median;
+  const mid = Math.floor(numericVotes.length / 2);
 
-  return modeTier;
+  if (numericVotes.length % 2 === 0) {
+    // Even number of votes - average the two middle values and round up
+    const avg = (numericVotes[mid - 1] + numericVotes[mid]) / 2;
+    median = Math.ceil(avg);
+  } else {
+    // Odd number of votes - take the middle value
+    median = numericVotes[mid];
+  }
+
+  return numToTier[median];
 }
 
 module.exports = {

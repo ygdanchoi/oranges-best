@@ -75,6 +75,9 @@ async function loadOrange() {
 
         currentOrange = await response.json();
 
+        // Set page title
+        document.getElementById('pageTitle').textContent = currentOrange.name;
+
         // Display orange info
         document.getElementById('orangeName').textContent = currentOrange.name;
         document.getElementById('orangeStore').textContent = currentOrange.store || '';

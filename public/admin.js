@@ -122,8 +122,22 @@ async function addOrange() {
 // Load oranges
 async function loadOranges() {
     try {
-        const response = await fetch('/api/oranges');
-        const oranges = await response.json();
+        const [orangesResponse, votesResponse] = await Promise.all([
+            fetch('/api/oranges'),
+            fetch('/api/votes')
+        ]);
+
+        const oranges = await orangesResponse.json();
+        const allVotes = await votesResponse.json();
+
+        // Group votes by orange
+        const votesByOrange = {};
+        allVotes.forEach(vote => {
+            if (!votesByOrange[vote.orange_id]) {
+                votesByOrange[vote.orange_id] = [];
+            }
+            votesByOrange[vote.orange_id].push(vote);
+        });
 
         const listDiv = document.getElementById('orangesList');
 
@@ -132,7 +146,19 @@ async function loadOranges() {
             return;
         }
 
-        listDiv.innerHTML = oranges.map(orange => `
+        listDiv.innerHTML = oranges.map(orange => {
+            const votes = votesByOrange[orange.id] || [];
+            const votesByTier = votes.reduce((acc, vote) => {
+                acc[vote.tier] = (acc[vote.tier] || 0) + 1;
+                return acc;
+            }, {});
+
+            const voteSummary = ['S', 'A', 'B', 'C', 'D', 'F']
+                .map(tier => votesByTier[tier] ? `${tier}: ${votesByTier[tier]}` : null)
+                .filter(Boolean)
+                .join(', ');
+
+            return `
             <div class="orange-item" id="orange-${orange.id}"
                  data-name="${escapeHtml(orange.name)}"
                  data-store="${escapeHtml(orange.store || '')}"
@@ -143,6 +169,7 @@ async function loadOranges() {
                     ${orange.store ? `<div style="color: #ff8c00; font-size: 0.9rem; font-weight: 600; margin-bottom: 0.25rem;">${escapeHtml(orange.store)}</div>` : ''}
                     <div class="orange-description">${escapeHtml(orange.description || '')}</div>
                     ${orange.image_url ? `<div style="color: #999; font-size: 0.8rem; margin-top: 0.25rem;">Image: ${escapeHtml(orange.image_url)}</div>` : ''}
+                    ${votes.length > 0 ? `<div style="color: #4a9eff; font-size: 0.85rem; margin-top: 0.5rem; font-weight: 600;">Votes (${votes.length}): ${voteSummary}</div>` : `<div style="color: #999; font-size: 0.85rem; margin-top: 0.5rem;">No votes yet</div>`}
                     <div style="color: #666; font-size: 0.85rem; margin-top: 0.5rem;">Vote URL: <code style="background: #f5f5f5; padding: 0.25rem 0.5rem; border-radius: 3px;">/vote.html?orange=${orange.id}</code></div>
                     <div id="edit-${orange.id}"></div>
                 </div>

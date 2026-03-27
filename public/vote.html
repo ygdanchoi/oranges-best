@@ -12,6 +12,13 @@
             min-height: 100vh;
             display: flex;
             flex-direction: column;
+            background: #f5f5f5;
+        }
+
+        @media (prefers-color-scheme: dark) {
+            body {
+                background: #1a1a1a;
+            }
         }
 
         .vote-container {
@@ -21,17 +28,26 @@
             flex: 1;
         }
 
-        .header {
+        .page-title {
             text-align: center;
             margin-bottom: 2rem;
             padding-bottom: 1rem;
             border-bottom: 2px solid #ff8c00;
         }
 
-        .header h1 {
+        .page-title h1 {
             margin: 0;
             color: #333;
             font-size: 1.5rem;
+        }
+
+        @media (prefers-color-scheme: dark) {
+            .page-title h1 {
+                color: #fff;
+            }
+            .page-title {
+                border-bottom-color: #ff8c00;
+            }
         }
 
         .orange-display {
@@ -43,22 +59,10 @@
             text-align: center;
         }
 
-        .orange-image {
-            width: 200px;
-            height: 200px;
-            margin: 0 auto 1rem;
-            background: #f5f5f5;
-            border-radius: 8px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 4rem;
-        }
-
-        .orange-image img {
-            max-width: 100%;
-            max-height: 100%;
-            border-radius: 8px;
+        @media (prefers-color-scheme: dark) {
+            .orange-display {
+                background: #2a2a2a;
+            }
         }
 
         .orange-name {
@@ -66,6 +70,12 @@
             font-weight: 700;
             margin-bottom: 0.5rem;
             color: #333;
+        }
+
+        @media (prefers-color-scheme: dark) {
+            .orange-name {
+                color: #fff;
+            }
         }
 
         .orange-store {
@@ -78,7 +88,37 @@
         .orange-description {
             color: #666;
             line-height: 1.5;
-            margin-top: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        @media (prefers-color-scheme: dark) {
+            .orange-description {
+                color: #ccc;
+            }
+        }
+
+        .orange-image {
+            width: 200px;
+            height: 200px;
+            margin: 1rem auto 0;
+            background: #f5f5f5;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 4rem;
+        }
+
+        @media (prefers-color-scheme: dark) {
+            .orange-image {
+                background: #1a1a1a;
+            }
+        }
+
+        .orange-image img {
+            max-width: 100%;
+            max-height: 100%;
+            border-radius: 8px;
         }
 
         .login-section {
@@ -89,9 +129,22 @@
             box-shadow: 0 2px 4px rgba(0,0,0,0.1);
         }
 
+        @media (prefers-color-scheme: dark) {
+            .login-section {
+                background: #2a2a2a;
+            }
+        }
+
         .login-section h2 {
             margin: 0 0 1rem 0;
             font-size: 1.2rem;
+            color: #333;
+        }
+
+        @media (prefers-color-scheme: dark) {
+            .login-section h2 {
+                color: #fff;
+            }
         }
 
         .form-group {
@@ -105,6 +158,12 @@
             color: #666;
         }
 
+        @media (prefers-color-scheme: dark) {
+            label {
+                color: #ccc;
+            }
+        }
+
         input {
             width: 100%;
             padding: 0.75rem;
@@ -114,6 +173,14 @@
             font-family: inherit;
         }
 
+        @media (prefers-color-scheme: dark) {
+            input {
+                background: #1a1a1a;
+                border-color: #444;
+                color: #fff;
+            }
+        }
+
         .tier-buttons {
             background: white;
             border-radius: 8px;
@@ -121,11 +188,23 @@
             box-shadow: 0 2px 4px rgba(0,0,0,0.1);
         }
 
+        @media (prefers-color-scheme: dark) {
+            .tier-buttons {
+                background: #2a2a2a;
+            }
+        }
+
         .tier-buttons h2 {
             margin: 0 0 1rem 0;
             text-align: center;
             font-size: 1.2rem;
             color: #333;
+        }
+
+        @media (prefers-color-scheme: dark) {
+            .tier-buttons h2 {
+                color: #fff;
+            }
         }
 
         .tier-grid {
@@ -136,38 +215,57 @@
         }
 
         .tier-btn {
-            padding: 2rem 1rem;
+            padding: 0;
             font-size: 2rem;
             font-weight: 700;
-            border: 3px solid #ddd;
-            background: white;
-            border-radius: 8px;
+            border: none;
+            border-radius: 50%;
+            width: 90px;
+            height: 90px;
             cursor: pointer;
             transition: all 0.2s;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+            color: white;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.3);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+        }
+
+        .tier-btn::before {
+            content: '🍃';
+            position: absolute;
+            top: -10px;
+            right: -5px;
+            font-size: 2rem;
         }
 
         .tier-btn:hover {
-            transform: scale(1.05);
-            border-color: #ff8c00;
+            transform: scale(1.1);
+            box-shadow: 0 6px 12px rgba(0,0,0,0.3);
         }
 
         .tier-btn:active {
             transform: scale(0.95);
         }
 
-        .tier-btn.tier-S { border-color: #ff4444; color: #ff4444; }
-        .tier-btn.tier-A { border-color: #ff8844; color: #ff8844; }
-        .tier-btn.tier-B { border-color: #ffcc44; color: #ffcc44; }
-        .tier-btn.tier-C { border-color: #88cc44; color: #88cc44; }
-        .tier-btn.tier-D { border-color: #4488cc; color: #4488cc; }
-        .tier-btn.tier-F { border-color: #8844cc; color: #8844cc; }
+        .tier-btn.tier-S {
+            background: linear-gradient(270deg, red, orange, yellow, green, blue, indigo, violet);
+            background-size: 400% 400%;
+            animation: rainbowPulse 6s linear infinite;
+        }
+        .tier-btn.tier-A { background: #ff7f00; }
+        .tier-btn.tier-B { background: #ffd700; }
+        .tier-btn.tier-C { background: #32cd32; }
+        .tier-btn.tier-D { background: #5a381e; }
+        .tier-btn.tier-F { background: #111111; }
 
-        .tier-btn.tier-S:hover { background: #fff5f5; }
-        .tier-btn.tier-A:hover { background: #fff9f5; }
-        .tier-btn.tier-B:hover { background: #fffef5; }
-        .tier-btn.tier-C:hover { background: #f9fff5; }
-        .tier-btn.tier-D:hover { background: #f5f9ff; }
-        .tier-btn.tier-F:hover { background: #f9f5ff; }
+        @keyframes rainbowPulse {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
 
         .message {
             padding: 1rem;
@@ -213,6 +311,13 @@
             color: #666;
         }
 
+        @media (prefers-color-scheme: dark) {
+            .current-vote {
+                background: #1a1a1a;
+                color: #ccc;
+            }
+        }
+
         .hidden {
             display: none;
         }
@@ -220,15 +325,15 @@
 </head>
 <body>
     <div class="vote-container">
-        <div class="header">
-            <h1>🍊 Orange Tierlist</h1>
+        <div class="page-title">
+            <h1 id="pageTitle">Orange</h1>
         </div>
 
         <div id="orangeDisplay" class="orange-display hidden">
-            <div class="orange-image" id="orangeImage">🍊</div>
             <div class="orange-name" id="orangeName"></div>
             <div class="orange-store" id="orangeStore"></div>
             <div class="orange-description" id="orangeDescription"></div>
+            <div class="orange-image" id="orangeImage">🍊</div>
         </div>
 
         <div id="loginSection" class="login-section hidden">

@@ -33,7 +33,6 @@ function renderTierlist() {
             tierContent.innerHTML = orangesInTier.map(orange => `
                 <div class="orange-card" onclick="window.location.href='/vote.html?orange=${orange.id}'">
                     <div class="orange-card-name">${escapeHtml(orange.name)}</div>
-                    ${orange.store ? `<div class="orange-card-store">${escapeHtml(orange.store)}</div>` : ''}
                     <div class="orange-card-votes">${orange.voteCount} ${orange.voteCount === 1 ? 'vote' : 'votes'}</div>
                 </div>
             `).join('');
