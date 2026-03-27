@@ -33,7 +33,6 @@ function createHamburgerMenu() {
             <button id="dropdown-btn" class="dropdown-btn" onclick="toggleMenu()">
                 <span class="dropdown-icon">☰</span>
                 <span class="dropdown-label">${escapeHtmlMenu(pageTitle)}</span>
-                <span class="dropdown-chevron">▼</span>
             </button>
             <div id="dropdown-content" class="dropdown-content">
                 <a href="/tierlist.html" class="dropdown-header">
@@ -41,9 +40,6 @@ function createHamburgerMenu() {
                 </a>
                 <div class="dropdown-items" id="menu-content">
                     <div class="menu-loading">Loading...</div>
-                </div>
-                <div class="dropdown-footer">
-                    <button id="logout-btn" class="logout-btn" onclick="logout()" style="display: none;">Logout</button>
                 </div>
             </div>
         </div>
@@ -82,24 +78,10 @@ function toggleMenu() {
         overlay.classList.add('open');
         btn.classList.add('open');
         renderMenuContent();
-        updateLogoutButton();
     } else {
         dropdown.classList.remove('open');
         overlay.classList.remove('open');
         btn.classList.remove('open');
-    }
-}
-
-// Check if user is logged in and show/hide logout button
-function updateLogoutButton() {
-    const cookies = document.cookie.split(';');
-    const authCookie = cookies.find(c => c.trim().startsWith('auth='));
-    const logoutBtn = document.getElementById('logout-btn');
-
-    if (authCookie && logoutBtn) {
-        logoutBtn.style.display = 'block';
-    } else if (logoutBtn) {
-        logoutBtn.style.display = 'none';
     }
 }
 
@@ -112,7 +94,7 @@ function renderMenuContent() {
         return;
     }
 
-    content.innerHTML = menuOranges.map(orange => {
+    let itemsHTML = menuOranges.map(orange => {
         // Find user's vote if logged in
         let userVoteTier = null;
         if (menuUsername && orange.votes && orange.votes.length > 0) {
@@ -136,6 +118,20 @@ function renderMenuContent() {
             </a>
         `;
     }).join('');
+
+    // Add logout option if logged in
+    const cookies = document.cookie.split(';');
+    const authCookie = cookies.find(c => c.trim().startsWith('auth='));
+    if (authCookie) {
+        itemsHTML += `
+            <button onclick="logout()" class="menu-item logout-item">
+                <div style="font-size: 1.5rem; flex-shrink: 0; width: 30px; height: 30px; display: flex; align-items: center; justify-content: center;">👋</div>
+                <div class="menu-item-name">Logout</div>
+            </button>
+        `;
+    }
+
+    content.innerHTML = itemsHTML;
 }
 
 // Logout
