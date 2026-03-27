@@ -4,7 +4,7 @@ let orangesData = [];
 // Load tierlist data
 async function loadTierlist() {
     try {
-        const response = await fetch('/api/tierlist');
+        const response = await fetch('/api/tierlist', { cache: 'no-store' });
         orangesData = await response.json();
 
         renderTierlist();
@@ -164,3 +164,7 @@ async function init() {
 }
 
 init();
+
+window.addEventListener('pageshow', (e) => {
+    if (e.persisted) loadTierlist();
+});

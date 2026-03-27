@@ -18,7 +18,6 @@ const MASTER_PASSWORD = process.env.MASTER_PASSWORD || 'ojoj';
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
-app.use(express.static('public'));
 
 // Simple auth middleware
 function checkAuth(req, res, next) {
@@ -36,6 +35,13 @@ function checkAuth(req, res, next) {
 app.get('/', (req, res) => {
   res.redirect('/tierlist.html');
 });
+
+app.get('/tierlist.html', (req, res) => {
+  res.setHeader('Cache-Control', 'no-store');
+  res.sendFile(path.join(__dirname, 'public', 'tierlist.html'));
+});
+
+app.use(express.static('public'));
 
 // API Endpoints
 
@@ -85,6 +91,7 @@ app.get('/api/votes', async (req, res) => {
 
 // Get oranges with tiers
 app.get('/api/tierlist', async (req, res) => {
+  res.setHeader('Cache-Control', 'no-store');
   try {
     const orangesWithTiers = await db.getOrangesWithTiers();
     res.json(orangesWithTiers);
