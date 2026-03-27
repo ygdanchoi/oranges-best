@@ -32,6 +32,14 @@ function checkAuth(req, res, next) {
 }
 
 // Root redirect
+// Block admin in non-development environments
+app.use(['/admin.html', '/api/admin'], (req, res, next) => {
+  if (process.env.NODE_ENV !== 'development') {
+    return res.status(404).end();
+  }
+  next();
+});
+
 app.get('/', (req, res) => {
   res.redirect('/tierlist.html');
 });
