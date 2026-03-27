@@ -2,10 +2,10 @@
 // Self-initializing — just include this script and it runs.
 
 const SPHERE_CONFIG = {
-    PARTICLE_COUNT: 150,
+    PARTICLE_COUNT: 300,
     ROTATION_SPEED: 0.003,   // radians per frame (~10s per revolution at 60fps)
     TILT_ANGLE: 0.30,        // X-axis tilt in radians (~17°), gives globe feel
-    FOCAL_LENGTH: 600,
+    FOCAL_LENGTH: 1500,
     BASE_EMOJI_SIZE: 22,     // px at front face
     MIN_EMOJI_SIZE: 6,       // px at back face
     MAX_ALPHA: 0.55,
@@ -20,16 +20,10 @@ let _sphereRadius = 1;
 let _cx = 0, _cy = 0;
 let _fontCache = {};
 let _resizeTimer = null;
-let _rafId = null;
 
-// ─── Ripple hook ────────────────────────────────────────────────────────────
-// No-op today. Future ripple effects: fill this in with wave math.
-// theta: azimuthal angle [-π, π], phi: polar angle [0, π], time: ms timestamp
-// Returns radial/angular displacement to apply to this particle.
 function applyDisplacement(theta, phi, time) {
     return { dTheta: 0, dPhi: 0, dR: 0 };
 }
-// ────────────────────────────────────────────────────────────────────────────
 
 function getFont(px) {
     if (!_fontCache[px]) _fontCache[px] = px + 'px serif';
@@ -46,18 +40,15 @@ function generateParticles() {
         const angle = i * goldenAngle;
         const x = Math.cos(angle) * r;
         const z = Math.sin(angle) * r;
-        // Store as spherical for ripple readiness
-        const phi = Math.acos(Math.max(-1, Math.min(1, y)));
+        const phi   = Math.acos(Math.max(-1, Math.min(1, y)));
         const theta = Math.atan2(z, x);
         _particles.push({ theta, phi });
     }
 }
 
-// Precompute combined rotation matrix Rx(tilt) * Ry(rotY)
 function buildRotationMatrix(rotY, rotX) {
     const cy = Math.cos(rotY), sy = Math.sin(rotY);
     const cx = Math.cos(rotX), sx = Math.sin(rotX);
-    // M = Rx * Ry
     return [
         cy,       0,    sy,
         sx * sy,  cx,  -sx * cy,
@@ -101,10 +92,9 @@ function projectParticle(particle, matrix, time) {
 }
 
 function draw(timestamp) {
-    _rafId = requestAnimationFrame(draw);
+    requestAnimationFrame(draw);
 
     _rotAngle += SPHERE_CONFIG.ROTATION_SPEED;
-
     _ctx.clearRect(0, 0, _canvas.width, _canvas.height);
 
     const matrix = buildRotationMatrix(_rotAngle, SPHERE_CONFIG.TILT_ANGLE);
@@ -127,7 +117,6 @@ function updateDimensions() {
     _cx = _canvas.width  / 2;
     _cy = _canvas.height / 2;
     _sphereRadius = Math.min(_cx, _cy) * 1.05;
-    // Canvas resize wipes context state — restore text settings
     _ctx.textBaseline = 'middle';
     _ctx.textAlign    = 'center';
 }
