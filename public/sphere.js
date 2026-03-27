@@ -5,11 +5,11 @@ const SPHERE_CONFIG = {
     PARTICLE_COUNT: 80,
     ROTATION_SPEED: 0.003,   // radians per frame (~10s per revolution at 60fps)
     TILT_ANGLE: 0.30,        // X-axis tilt in radians (~17°), gives globe feel
-    FOCAL_LENGTH: 1500,
+    FOCAL_LENGTH: 3000,
     BASE_EMOJI_SIZE: 30,     // px at front face
-    MIN_EMOJI_SIZE: 9,       // px at back face
+    MIN_EMOJI_SIZE: 14,      // px at back face
     MAX_ALPHA: 0.80,
-    MIN_ALPHA: 0.18,
+    MIN_ALPHA: 0.30,
     EMOJI: '🍊',
 };
 
