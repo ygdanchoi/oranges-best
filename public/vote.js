@@ -81,7 +81,7 @@ async function loadOrange() {
 
         currentOrange = await response.json();
 
-        document.title = `${currentOrange.name}`;
+        document.title = `Orange Tierlist Alignment Sync - ${currentOrange.name}`;
 
         // Update dropdown button title
         const dropdownLabel = document.querySelector('.dropdown-label');
