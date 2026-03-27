@@ -139,7 +139,7 @@ async function loadOranges() {
                     <div class="orange-description">${escapeHtml(orange.description || '')}</div>
                     ${orange.store ? `<div style="color: #666; font-size: 0.9rem; font-weight: 600; margin-top: 0.25rem;">${escapeHtml(orange.store)}</div>` : ''}
                     ${orange.image_url ? `<div style="color: #999; font-size: 0.8rem; margin-top: 0.25rem;">Image: ${escapeHtml(orange.image_url)}</div>` : ''}
-                    ${votes.length > 0 ? `<div style="color: #4a9eff; font-size: 0.85rem; margin-top: 0.5rem; font-weight: 600;">Votes (${votes.length}): ${voteSummary}</div>` : `<div style="color: #999; font-size: 0.85rem; margin-top: 0.5rem;">No votes yet</div>`}
+                    <div id="vote-summary-${orange.id}" style="font-size: 0.85rem; margin-top: 0.5rem; font-weight: 600;">${votes.length > 0 ? `<span style="color: #4a9eff;">Votes (${votes.length}): ${voteSummary}</span>` : `<span style="color: #999;">No votes yet</span>`}</div>
                     <div id="votes-${orange.id}"></div>
                     <div id="edit-${orange.id}"></div>
                 </div>
@@ -248,6 +248,20 @@ async function editVotes(orangeId) {
         const allVotes = await votesResponse.json();
         const votes = allVotes.filter(v => v.orange_id === orangeId);
 
+        const votesByTier = votes.reduce((acc, vote) => {
+            acc[vote.tier] = (acc[vote.tier] || 0) + 1;
+            return acc;
+        }, {});
+        const voteSummary = ['S', 'A', 'B', 'C', 'D', 'F']
+            .map(tier => votesByTier[tier] ? `${tier}: ${votesByTier[tier]}` : null)
+            .filter(Boolean).join(', ');
+        const summaryDiv = document.getElementById(`vote-summary-${orangeId}`);
+        if (summaryDiv) {
+            summaryDiv.innerHTML = votes.length > 0
+                ? `<span style="color: #4a9eff;">Votes (${votes.length}): ${voteSummary}</span>`
+                : `<span style="color: #999;">No votes yet</span>`;
+        }
+
         const votesDiv = document.getElementById(`votes-${orangeId}`);
         const tiers = ['S', 'A', 'B', 'C', 'D', 'F'];
 
@@ -278,8 +292,7 @@ async function editVotes(orangeId) {
 
         votesDiv.innerHTML = formHTML;
     } catch (error) {
-        alert('Error loading votes: ' + error.message);
-        console.error('Error:', error);
+        console.error('Error loading votes:', error);
     }
 }
 
@@ -305,19 +318,14 @@ async function updateVote(voteId, orangeId, username) {
             throw new Error(data.error || 'Failed to update vote');
         }
 
-        alert('Vote updated!');
         editVotes(orangeId);
     } catch (error) {
-        alert('Error updating vote: ' + error.message);
-        console.error('Error:', error);
+        console.error('Error updating vote:', error);
     }
 }
 
 // Delete a vote
 async function deleteVote(voteId, orangeId) {
-    if (!confirm('Delete this vote?')) {
-        return;
-    }
 
     try {
         const response = await fetch(`/api/admin/votes/${voteId}?password=${password}`, {
@@ -332,8 +340,7 @@ async function deleteVote(voteId, orangeId) {
 
         editVotes(orangeId);
     } catch (error) {
-        alert('Error deleting vote: ' + error.message);
-        console.error('Error:', error);
+        console.error('Error deleting vote:', error);
     }
 }
 

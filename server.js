@@ -172,6 +172,43 @@ app.put('/api/admin/oranges/:id', checkAuth, async (req, res) => {
   }
 });
 
+// Update vote
+app.put('/api/admin/votes/:id', checkAuth, async (req, res) => {
+  try {
+    const { tier } = req.body;
+    const vote = await db.updateVote(req.params.id, tier);
+
+    if (!vote) {
+      return res.status(404).json({ error: 'Vote not found' });
+    }
+
+    io.emit('voteUpdate', { orangeId: vote.orange_id });
+
+    res.json({ success: true, vote });
+  } catch (error) {
+    console.error('Error updating vote:', error);
+    res.status(500).json({ error: 'Failed to update vote' });
+  }
+});
+
+// Delete vote
+app.delete('/api/admin/votes/:id', checkAuth, async (req, res) => {
+  try {
+    const vote = await db.deleteVote(req.params.id);
+
+    if (!vote) {
+      return res.status(404).json({ error: 'Vote not found' });
+    }
+
+    io.emit('voteUpdate', { orangeId: vote.orange_id });
+
+    res.json({ success: true, vote });
+  } catch (error) {
+    console.error('Error deleting vote:', error);
+    res.status(500).json({ error: 'Failed to delete vote' });
+  }
+});
+
 // Delete orange
 app.delete('/api/admin/oranges/:id', checkAuth, async (req, res) => {
   try {

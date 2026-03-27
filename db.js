@@ -53,6 +53,21 @@ async function deleteOrange(id) {
   return result.rows[0];
 }
 
+// Delete a vote by id
+async function deleteVote(id) {
+  const result = await pool.query('DELETE FROM votes WHERE id = $1 RETURNING *', [id]);
+  return result.rows[0];
+}
+
+// Update a vote's tier
+async function updateVote(id, tier) {
+  const result = await pool.query(
+    'UPDATE votes SET tier = $1 WHERE id = $2 RETURNING *',
+    [tier, id]
+  );
+  return result.rows[0];
+}
+
 // Submit or update vote (upsert)
 async function submitVote(orangeId, username, tier) {
   const result = await pool.query(
@@ -168,6 +183,8 @@ module.exports = {
   createOrange,
   updateOrange,
   deleteOrange,
+  deleteVote,
+  updateVote,
   submitVote,
   getVotesForOrange,
   getAllVotes,
