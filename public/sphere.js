@@ -6,8 +6,8 @@ const SPHERE_CONFIG = {
     ROTATION_SPEED: 0.003,   // radians per frame (~10s per revolution at 60fps)
     TILT_ANGLE: 0.30,        // X-axis tilt in radians (~17°), gives globe feel
     FOCAL_LENGTH: 3000,
-    BASE_EMOJI_SIZE: 30,     // px at front face
-    MIN_EMOJI_SIZE: 14,      // px at back face
+    BASE_EMOJI_SIZE: 36,     // px at front face
+    MIN_EMOJI_SIZE: 17,      // px at back face
     MAX_ALPHA: 0.80,
     MIN_ALPHA: 0.30,
     EMOJI: '🍊',
@@ -156,7 +156,7 @@ function updateDimensions() {
     _canvas.height = window.innerHeight;
     _cx = _canvas.width  / 2;
     _cy = _canvas.height / 2 + 40;
-    _sphereRadius = Math.min(_cx, _cy) * 1.05;
+    _sphereRadius = Math.min(_cx, _cy) * 1.35;
     _ctx.textBaseline = 'middle';
     _ctx.textAlign    = 'center';
 }
