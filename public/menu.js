@@ -77,7 +77,7 @@ function toggleMenu() {
         dropdown.classList.add('open');
         overlay.classList.add('open');
         btn.classList.add('open');
-        renderMenuContent();
+        loadMenuOranges().then(renderMenuContent);
     } else {
         dropdown.classList.remove('open');
         overlay.classList.remove('open');
