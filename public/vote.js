@@ -3,6 +3,12 @@ let username = '';
 let password = '';
 let currentOrange = null;
 
+// Lens flare effect state
+let lensFlareCanvas = null;
+let lensFlareCtx = null;
+let lensFlareAnimFrame = null;
+let activeLensFlares = [];
+
 // Get orange ID from URL
 function getOrangeId() {
     const params = new URLSearchParams(window.location.search);
@@ -77,11 +83,12 @@ async function loadOrange() {
 
         // Set page title
         document.getElementById('pageTitle').textContent = currentOrange.name;
+        document.title = `${currentOrange.name}`;
 
         // Update dropdown button title
         const dropdownLabel = document.querySelector('.dropdown-label');
         if (dropdownLabel) {
-            dropdownLabel.textContent = `🍊 ${currentOrange.name}`;
+            dropdownLabel.textContent = `${currentOrange.name}`;
         }
 
         // Display orange info
@@ -128,8 +135,125 @@ function highlightVotedButton(tier) {
     }
 }
 
+// Lens flare effect
+function playLensFlareEffect(buttonEl) {
+    const rect = buttonEl.getBoundingClientRect();
+    const x = rect.left + rect.width / 2;
+    const y = rect.top + rect.height / 2;
+
+    lensFlareCanvas.width = window.innerWidth;
+    lensFlareCanvas.height = window.innerHeight;
+
+    activeLensFlares.push({ startTime: Date.now(), x, y, duration: 500 });
+    if (activeLensFlares.length > 2) activeLensFlares.shift();
+
+    if (!lensFlareAnimFrame) animateLensFlare();
+}
+
+function animateLensFlare() {
+    const now = Date.now();
+    lensFlareCtx.clearRect(0, 0, lensFlareCanvas.width, lensFlareCanvas.height);
+    lensFlareCtx.globalCompositeOperation = 'screen';
+
+    activeLensFlares = activeLensFlares.filter(effect => {
+        const elapsed = now - effect.startTime;
+        const progress = Math.min(elapsed / effect.duration, 1);
+        if (progress >= 1) return false;
+        drawLensFlare(effect.x, effect.y, progress);
+        return true;
+    });
+
+    if (activeLensFlares.length > 0) {
+        lensFlareAnimFrame = requestAnimationFrame(animateLensFlare);
+    } else {
+        lensFlareAnimFrame = null;
+        lensFlareCtx.clearRect(0, 0, lensFlareCanvas.width, lensFlareCanvas.height);
+    }
+}
+
+function drawLensFlare(x, y, progress) {
+    const maxDim = Math.max(lensFlareCanvas.width, lensFlareCanvas.height);
+
+    // Expanding bubble
+    const ringEase = progress * progress;
+    const ringRadius = ringEase * maxDim * 1.2;
+    const bubble = lensFlareCtx.createRadialGradient(x, y, 0, x, y, ringRadius);
+    bubble.addColorStop(0, `rgba(255, 255, 255, ${(1 - progress) * 0.15})`);
+    bubble.addColorStop(0.7, `rgba(235, 215, 255, ${(1 - progress) * 0.1})`);
+    bubble.addColorStop(1, `rgba(235, 215, 255, 0)`);
+    lensFlareCtx.fillStyle = bubble;
+    lensFlareCtx.beginPath();
+    lensFlareCtx.arc(x, y, ringRadius, 0, Math.PI * 2);
+    lensFlareCtx.fill();
+
+    for (let pass = 0; pass < 2; pass++) {
+        lensFlareCtx.strokeStyle = `rgba(235, 215, 255, ${(1 - progress) * 0.6})`;
+        lensFlareCtx.lineWidth = 12;
+        lensFlareCtx.shadowColor = 'rgba(255, 255, 255, 0.9)';
+        lensFlareCtx.shadowBlur = 40;
+        lensFlareCtx.beginPath();
+        lensFlareCtx.arc(x, y, ringRadius, 0, Math.PI * 2);
+        lensFlareCtx.stroke();
+    }
+
+    // Six rotating spokes
+    const spokeLength = progress < 0.5
+        ? (progress * 2) * maxDim * 0.8
+        : ((1 - progress) * 2) * maxDim * 0.8;
+    const rotation = progress * Math.PI * 0.6;
+
+    lensFlareCtx.strokeStyle = `rgba(235, 215, 255, 0.4)`;
+    lensFlareCtx.lineWidth = 10;
+    lensFlareCtx.shadowColor = 'rgba(255, 255, 255, 0.5)';
+    lensFlareCtx.shadowBlur = 20;
+
+    for (let i = 0; i < 6; i++) {
+        const angle = (Math.PI * 2 / 6) * i + rotation;
+        lensFlareCtx.beginPath();
+        lensFlareCtx.moveTo(x, y);
+        lensFlareCtx.lineTo(x + Math.cos(angle) * spokeLength, y + Math.sin(angle) * spokeLength);
+        lensFlareCtx.stroke();
+    }
+
+    // Eight-point sparkle star
+    let starSize;
+    if (progress < 0.2) {
+        starSize = (progress / 0.2) * 140;
+    } else if (progress < 0.8) {
+        starSize = 140;
+    } else {
+        starSize = ((1 - progress) / 0.2) * 140;
+    }
+
+    lensFlareCtx.fillStyle = `rgba(255, 255, 255, 0.8)`;
+    lensFlareCtx.shadowColor = 'rgba(255, 255, 255, 1)';
+    lensFlareCtx.shadowBlur = 8;
+
+    [0, Math.PI / 2, Math.PI, Math.PI * 1.5].forEach(angle => {
+        drawSparklePoint(x, y, angle, starSize, 1);
+    });
+    [Math.PI / 4, Math.PI * 3 / 4, Math.PI * 5 / 4, Math.PI * 7 / 4].forEach(angle => {
+        drawSparklePoint(x, y, angle, starSize * 0.7, 0.5);
+    });
+}
+
+function drawSparklePoint(cx, cy, angle, length, opacity) {
+    lensFlareCtx.save();
+    lensFlareCtx.translate(cx, cy);
+    lensFlareCtx.rotate(angle);
+    lensFlareCtx.globalAlpha = opacity;
+    lensFlareCtx.beginPath();
+    lensFlareCtx.moveTo(length, 0);
+    lensFlareCtx.lineTo(length * 0.1, length * 0.08);
+    lensFlareCtx.lineTo(0, 0);
+    lensFlareCtx.lineTo(length * 0.1, -length * 0.08);
+    lensFlareCtx.closePath();
+    lensFlareCtx.fill();
+    lensFlareCtx.restore();
+}
+
 // Submit vote
-async function vote(tier) {
+async function vote(tier, buttonEl) {
     if (!username || !password) {
         document.getElementById('voteSection').classList.add('hidden');
         document.getElementById('loginSection').classList.remove('hidden');
@@ -162,8 +286,9 @@ async function vote(tier) {
             throw new Error(data.error || 'Failed to submit vote');
         }
 
-        // Highlight the voted button
+        // Highlight the voted button and play effect
         highlightVotedButton(tier);
+        if (buttonEl) playLensFlareEffect(buttonEl);
     } catch (error) {
         showMessage('voteMessage', error.message, 'error');
         console.error('Vote error:', error);
@@ -202,6 +327,9 @@ function showMessage(elementId, message, type) {
 
 // Initialize
 async function init() {
+    lensFlareCanvas = document.getElementById('lens-flare-canvas');
+    lensFlareCtx = lensFlareCanvas.getContext('2d');
+
     orangeId = getOrangeId();
 
     if (!orangeId) {

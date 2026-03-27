@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Vote - Orange Tierlist</title>
+    <title>Orange Tierlist</title>
     <link rel="stylesheet" href="styles.css">
     <style>
         body {
@@ -207,6 +207,14 @@
             margin-bottom: 1rem;
         }
 
+        #lens-flare-canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            pointer-events: none;
+            z-index: 50;
+        }
+
         .tier-btn {
             padding: 0;
             font-size: 2rem;
@@ -224,6 +232,7 @@
             align-items: center;
             justify-content: center;
             position: relative;
+            z-index: 51;
         }
 
         .tier-btn::before {
@@ -341,7 +350,7 @@
 <body>
     <div class="vote-container">
         <div class="page-title">
-            <h1 id="pageTitle">Orange</h1>
+            <h1 id="pageTitle"></h1>
         </div>
 
         <div id="loginSection" class="login-section hidden">
@@ -361,12 +370,12 @@
         <div id="voteSection" class="tier-buttons hidden">
             <h2>Rate This Orange</h2>
             <div class="tier-grid">
-                <button class="tier-btn tier-S" onclick="vote('S')">S</button>
-                <button class="tier-btn tier-A" onclick="vote('A')">A</button>
-                <button class="tier-btn tier-B" onclick="vote('B')">B</button>
-                <button class="tier-btn tier-C" onclick="vote('C')">C</button>
-                <button class="tier-btn tier-D" onclick="vote('D')">D</button>
-                <button class="tier-btn tier-F" onclick="vote('F')">F</button>
+                <button class="tier-btn tier-S" onclick="vote('S', this)">S</button>
+                <button class="tier-btn tier-A" onclick="vote('A', this)">A</button>
+                <button class="tier-btn tier-B" onclick="vote('B', this)">B</button>
+                <button class="tier-btn tier-C" onclick="vote('C', this)">C</button>
+                <button class="tier-btn tier-D" onclick="vote('D', this)">D</button>
+                <button class="tier-btn tier-F" onclick="vote('F', this)">F</button>
             </div>
         </div>
 
@@ -377,6 +386,7 @@
         </div>
     </div>
 
+    <canvas id="lens-flare-canvas"></canvas>
     <script src="menu.js"></script>
     <script src="vote.js"></script>
 </body>
