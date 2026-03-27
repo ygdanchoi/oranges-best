@@ -23,47 +23,68 @@ async function loadMenuOranges() {
     }
 }
 
-// Create hamburger menu
+// Create dropdown menu
 function createHamburgerMenu() {
+    // Get page title
+    const pageTitle = getPageTitle();
+
     const menuHTML = `
-        <div id="hamburger-btn" class="hamburger-btn" onclick="toggleMenu()">
-            <div class="hamburger-line"></div>
-            <div class="hamburger-line"></div>
-            <div class="hamburger-line"></div>
+        <div class="dropdown-menu-container">
+            <button id="dropdown-btn" class="dropdown-btn" onclick="toggleMenu()">
+                <span class="dropdown-icon">☰</span>
+                <span class="dropdown-label">${escapeHtmlMenu(pageTitle)}</span>
+                <span class="dropdown-chevron">▼</span>
+            </button>
+            <div id="dropdown-content" class="dropdown-content">
+                <a href="/tierlist.html" class="dropdown-header">
+                    <span>View Tierlist</span>
+                </a>
+                <div class="dropdown-items" id="menu-content">
+                    <div class="menu-loading">Loading...</div>
+                </div>
+                <div class="dropdown-footer">
+                    <button id="logout-btn" class="logout-btn" onclick="logout()" style="display: none;">Logout</button>
+                </div>
+            </div>
         </div>
-        <div id="hamburger-menu" class="hamburger-menu">
-            <div class="menu-header" onclick="window.location.href='/tierlist.html'" style="cursor: pointer;">
-                <h3>View Tierlist</h3>
-                <button class="menu-close" onclick="event.stopPropagation(); toggleMenu()">✕</button>
-            </div>
-            <div class="menu-content" id="menu-content">
-                <div class="menu-loading">Loading...</div>
-            </div>
-            <div class="menu-footer">
-                <button id="logout-btn" class="logout-btn" onclick="logout()" style="display: none;">Logout</button>
-            </div>
-        </div>
-        <div id="menu-overlay" class="menu-overlay" onclick="toggleMenu()"></div>
+        <div id="dropdown-overlay" class="dropdown-overlay" onclick="toggleMenu()"></div>
     `;
 
     document.body.insertAdjacentHTML('beforeend', menuHTML);
 }
 
+// Get page title based on current page
+function getPageTitle() {
+    const path = window.location.pathname;
+
+    if (path.includes('tierlist')) {
+        return '🍊 Orange Tierlist Alignment Sync II';
+    } else if (path.includes('admin')) {
+        return '🍊 Orange Admin Panel';
+    } else if (path.includes('vote')) {
+        // Try to get the orange name from the page if available
+        const orangeName = document.getElementById('pageTitle')?.textContent || 'Orange';
+        return `🍊 ${orangeName}`;
+    }
+
+    return '🍊 Orange';
+}
+
 // Toggle menu
 function toggleMenu() {
     menuOpen = !menuOpen;
-    const menu = document.getElementById('hamburger-menu');
-    const overlay = document.getElementById('menu-overlay');
-    const btn = document.getElementById('hamburger-btn');
+    const dropdown = document.getElementById('dropdown-content');
+    const overlay = document.getElementById('dropdown-overlay');
+    const btn = document.getElementById('dropdown-btn');
 
     if (menuOpen) {
-        menu.classList.add('open');
+        dropdown.classList.add('open');
         overlay.classList.add('open');
         btn.classList.add('open');
         renderMenuContent();
         updateLogoutButton();
     } else {
-        menu.classList.remove('open');
+        dropdown.classList.remove('open');
         overlay.classList.remove('open');
         btn.classList.remove('open');
     }

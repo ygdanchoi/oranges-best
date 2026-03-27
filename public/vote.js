@@ -78,6 +78,12 @@ async function loadOrange() {
         // Set page title
         document.getElementById('pageTitle').textContent = currentOrange.name;
 
+        // Update dropdown button title
+        const dropdownLabel = document.querySelector('.dropdown-label');
+        if (dropdownLabel) {
+            dropdownLabel.textContent = `🍊 ${currentOrange.name}`;
+        }
+
         // Display orange info
         document.getElementById('orangeDescription').textContent = currentOrange.description || '';
         document.getElementById('orangeStore').textContent = currentOrange.store || '';

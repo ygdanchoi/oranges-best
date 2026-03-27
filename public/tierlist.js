@@ -53,7 +53,9 @@ function renderTierlist() {
 
     tiers.forEach(tier => {
         const tierContent = document.getElementById(`tier-${tier}`);
-        const orangesInTier = orangesData.filter(o => o.tier === tier);
+        const orangesInTier = orangesData
+            .filter(o => o.tier === tier)
+            .sort((a, b) => (b.voteCount || 0) - (a.voteCount || 0));
 
         if (orangesInTier.length === 0) {
             tierContent.innerHTML = '';
@@ -73,6 +75,32 @@ function renderTierlist() {
             }).join('');
         }
     });
+
+    // Render unvoted oranges
+    const unvotedContent = document.getElementById('tier-unvoted');
+    if (unvotedContent) {
+        const unvotedOranges = orangesData
+            .filter(o => !o.tier)
+            .sort((a, b) => (b.voteCount || 0) - (a.voteCount || 0));
+
+        if (unvotedOranges.length === 0) {
+            unvotedContent.innerHTML = '';
+            unvotedContent.classList.add('empty');
+        } else {
+            unvotedContent.classList.remove('empty');
+            unvotedContent.innerHTML = unvotedOranges.map(orange => {
+                const voteRange = getVoteRange(orange.votes);
+                const voteBreakdown = formatVoteBreakdown(orange.voteCounts);
+
+                return `
+                    <div class="orange-card" onclick="window.location.href='/vote.html?orange=${orange.id}'" title="${voteBreakdown}">
+                        <div class="orange-card-name">${escapeHtml(orange.name)}</div>
+                        <div class="orange-card-votes">${orange.voteCount} ${orange.voteCount === 1 ? 'vote' : 'votes'}${voteRange ? ` (${voteRange})` : ''}</div>
+                    </div>
+                `;
+            }).join('');
+        }
+    }
 }
 
 // Escape HTML

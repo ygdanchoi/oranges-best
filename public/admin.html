@@ -208,12 +208,42 @@
             border-radius: 4px;
             margin-top: 0.5rem;
         }
+
+        @media (prefers-color-scheme: dark) {
+            .edit-form {
+                background: #333;
+            }
+        }
+
+        .edit-votes-form {
+            background: #f8f9fa;
+            padding: 1rem;
+            border-radius: 4px;
+            margin-top: 0.5rem;
+        }
+
+        @media (prefers-color-scheme: dark) {
+            .edit-votes-form {
+                background: #333;
+            }
+        }
+
+        .edit-votes-form select {
+            background: white;
+            color: #333;
+        }
+
+        @media (prefers-color-scheme: dark) {
+            .edit-votes-form select {
+                background: #1a1a1a;
+                color: #fff;
+                border-color: #444;
+            }
+        }
     </style>
 </head>
 <body>
     <div class="admin-container">
-        <h1>🍊 Orange Admin Panel</h1>
-
         <!-- Login Section -->
         <div id="loginSection" class="login-section">
             <h2>Login</h2>
@@ -223,6 +253,12 @@
                 <input type="password" id="password" placeholder="Enter admin password">
             </div>
             <button onclick="login()">Login</button>
+        </div>
+
+        <!-- List Oranges Section -->
+        <div id="listSection" class="list-section hidden">
+            <h2>Existing Oranges</h2>
+            <div id="orangesList"></div>
         </div>
 
         <!-- Add Orange Section -->
@@ -246,12 +282,6 @@
                 <input type="text" id="imageUrl" placeholder="https://example.com/image.jpg">
             </div>
             <button onclick="addOrange()">Add Orange</button>
-        </div>
-
-        <!-- List Oranges Section -->
-        <div id="listSection" class="list-section hidden">
-            <h2>Existing Oranges</h2>
-            <div id="orangesList"></div>
         </div>
     </div>
 

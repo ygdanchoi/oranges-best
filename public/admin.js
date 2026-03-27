@@ -135,16 +135,17 @@ async function loadOranges() {
                  data-description="${escapeHtml(orange.description || '')}"
                  data-imageurl="${escapeHtml(orange.image_url || '')}">
                 <div class="orange-info">
-                    <div class="orange-name">${escapeHtml(orange.name)} <span style="color: #999; font-size: 0.8rem; font-weight: normal;">(ID: ${orange.id})</span></div>
-                    ${orange.store ? `<div style="color: #ff8c00; font-size: 0.9rem; font-weight: 600; margin-bottom: 0.25rem;">${escapeHtml(orange.store)}</div>` : ''}
+                    <div class="orange-name"><a href="/vote.html?orange=${orange.id}" target="_blank" style="color: inherit; text-decoration: none; font-weight: 700;">${escapeHtml(orange.name)}</a> <span style="color: #999; font-size: 0.8rem; font-weight: normal;">(ID: ${orange.id})</span></div>
                     <div class="orange-description">${escapeHtml(orange.description || '')}</div>
+                    ${orange.store ? `<div style="color: #666; font-size: 0.9rem; font-weight: 600; margin-top: 0.25rem;">${escapeHtml(orange.store)}</div>` : ''}
                     ${orange.image_url ? `<div style="color: #999; font-size: 0.8rem; margin-top: 0.25rem;">Image: ${escapeHtml(orange.image_url)}</div>` : ''}
                     ${votes.length > 0 ? `<div style="color: #4a9eff; font-size: 0.85rem; margin-top: 0.5rem; font-weight: 600;">Votes (${votes.length}): ${voteSummary}</div>` : `<div style="color: #999; font-size: 0.85rem; margin-top: 0.5rem;">No votes yet</div>`}
-                    <div style="color: #666; font-size: 0.85rem; margin-top: 0.5rem;">Vote URL: <code style="background: #f5f5f5; padding: 0.25rem 0.5rem; border-radius: 3px;">/vote.html?orange=${orange.id}</code></div>
+                    <div id="votes-${orange.id}"></div>
                     <div id="edit-${orange.id}"></div>
                 </div>
                 <div class="orange-actions">
                     <button class="btn-small" onclick="editOrange(${orange.id})">Edit</button>
+                    <button class="btn-small" onclick="editVotes(${orange.id})" style="background: #17a2b8;">Votes</button>
                     <button class="btn-small btn-delete" onclick="deleteOrange(${orange.id})">Delete</button>
                 </div>
             </div>
@@ -235,6 +236,110 @@ async function saveOrange(id) {
 // Cancel edit
 function cancelEdit(id) {
     document.getElementById(`edit-${id}`).innerHTML = '';
+}
+
+// Edit votes for an orange
+async function editVotes(orangeId) {
+    // Close any existing edit forms
+    document.querySelectorAll('.edit-votes-form').forEach(form => form.remove());
+
+    try {
+        const votesResponse = await fetch('/api/votes');
+        const allVotes = await votesResponse.json();
+        const votes = allVotes.filter(v => v.orange_id === orangeId);
+
+        const votesDiv = document.getElementById(`votes-${orangeId}`);
+        const tiers = ['S', 'A', 'B', 'C', 'D', 'F'];
+
+        let formHTML = `<div class="edit-votes-form" style="margin-top: 1rem; padding: 1rem; background: #f8f9fa; border-radius: 4px;">
+            <div style="font-weight: 600; margin-bottom: 0.75rem;">Edit Votes</div>`;
+
+        if (votes.length > 0) {
+            formHTML += `<div style="margin-bottom: 1rem;">`;
+            votes.forEach(vote => {
+                formHTML += `
+                    <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.5rem; padding: 0.5rem; background: white; border-radius: 3px;">
+                        <span style="flex: 1;">${escapeHtml(vote.username)}</span>
+                        <select id="tier-${vote.id}" style="padding: 0.25rem; border: 1px solid #ddd; border-radius: 3px;">
+                            ${tiers.map(tier => `<option value="${tier}" ${vote.tier === tier ? 'selected' : ''}>${tier}</option>`).join('')}
+                        </select>
+                        <button onclick="updateVote(${vote.id}, ${orangeId}, '${vote.username}')" style="background: #28a745; color: white; border: none; padding: 0.25rem 0.75rem; border-radius: 3px; cursor: pointer; font-size: 0.8rem;">Save</button>
+                        <button onclick="deleteVote(${vote.id}, ${orangeId})" style="background: #dc3545; color: white; border: none; padding: 0.25rem 0.75rem; border-radius: 3px; cursor: pointer; font-size: 0.8rem;">Delete</button>
+                    </div>
+                `;
+            });
+            formHTML += `</div>`;
+        } else {
+            formHTML += `<div style="color: #999; font-size: 0.85rem;">No votes yet</div>`;
+        }
+
+        formHTML += `<br><br><button onclick="closeVotesEdit(${orangeId})" style="background: #6c757d; color: white; border: none; padding: 0.25rem 0.75rem; border-radius: 3px; cursor: pointer; font-size: 0.8rem;">Close</button>`;
+        formHTML += `</div>`;
+
+        votesDiv.innerHTML = formHTML;
+    } catch (error) {
+        alert('Error loading votes: ' + error.message);
+        console.error('Error:', error);
+    }
+}
+
+// Update a vote
+async function updateVote(voteId, orangeId, username) {
+    const newTier = document.getElementById(`tier-${voteId}`).value;
+
+    try {
+        const response = await fetch(`/api/admin/votes/${voteId}`, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                tier: newTier,
+                password
+            })
+        });
+
+        const data = await response.json();
+
+        if (!response.ok || !data.success) {
+            throw new Error(data.error || 'Failed to update vote');
+        }
+
+        alert('Vote updated!');
+        editVotes(orangeId);
+    } catch (error) {
+        alert('Error updating vote: ' + error.message);
+        console.error('Error:', error);
+    }
+}
+
+// Delete a vote
+async function deleteVote(voteId, orangeId) {
+    if (!confirm('Delete this vote?')) {
+        return;
+    }
+
+    try {
+        const response = await fetch(`/api/admin/votes/${voteId}?password=${password}`, {
+            method: 'DELETE'
+        });
+
+        const data = await response.json();
+
+        if (!response.ok || !data.success) {
+            throw new Error(data.error || 'Failed to delete vote');
+        }
+
+        editVotes(orangeId);
+    } catch (error) {
+        alert('Error deleting vote: ' + error.message);
+        console.error('Error:', error);
+    }
+}
+
+// Close votes edit
+function closeVotesEdit(orangeId) {
+    document.getElementById(`votes-${orangeId}`).innerHTML = '';
 }
 
 // Delete orange
