@@ -135,8 +135,8 @@
 
         .orange-card {
             background: white;
-            border-radius: 8px;
-            padding: 0.75rem 1rem;
+            border-radius: 9999px;
+            padding: 0.6rem 1.4rem;
             box-shadow: 0 2px 4px rgba(0,0,0,0.1);
             transition: transform 0.2s, box-shadow 0.2s;
             cursor: pointer;
@@ -144,6 +144,16 @@
             animation: fadeInSlide 0.4s ease forwards, floatUpDown 4.5s ease-in-out infinite;
             opacity: 0;
             transform: translateY(10px);
+            position: relative;
+        }
+
+        .orange-card::before {
+            content: '🍃';
+            position: absolute;
+            top: -10px;
+            right: -6px;
+            font-size: 1.4rem;
+            transform: none;
         }
 
         @media (prefers-color-scheme: dark) {
@@ -237,7 +247,7 @@
         <div class="header"></div>
 
         <div id="loading" class="loading">
-            Loading tierlist...
+            
         </div>
 
         <div id="tierlist" class="tierlist hidden">
